@@ -30,20 +30,17 @@
 
         $lightBox.find('[data-role="close"]').on('click', function () {
             var $this = $(this);
-            if ($this.hasClass('active')) {
-                return;
+            if (!$this.hasClass('active')) {
+                $this.addClass('active');
+                lightBoxClose();
             }
-            $this.addClass('active');
-            $lightBox.find('.light-box-cnt').fadeOut(200, function () {
-                $lightBox.removeClass('show-visible');
-                setTimeout(function () {
-                    $lightBox.removeClass('show');
-                    $lightBox.find('.light-box-cnt').css({
-                        display: ''
-                    });
-                    $this.removeClass('active');
-                }, 200);
-            });
+        });
+
+        $lightBox.on('click', function (e) {
+            var $target = $(e.target);
+            if (!$target.parents('.light-box-cnt').first().length) {
+                lightBoxClose();
+            }
         });
 
         $lightBox.find('[data-role="rotate"]').on('click', function () {
@@ -104,6 +101,19 @@
         }).mouseup(function () {
             dragToggle = false;
         });
+
+        function lightBoxClose() {
+            $lightBox.find('.light-box-cnt').fadeOut(200, function () {
+                $lightBox.removeClass('show-visible');
+                setTimeout(function () {
+                    $lightBox.removeClass('show');
+                    $lightBox.find('.light-box-cnt').css({
+                        display: ''
+                    });
+                    $lightBox.find('[data-role="close"]').removeClass('active');
+                }, 200);
+            });
+        }
 
         function changeImage($lightBoxImg, url) {
             var oldWidth = $lightBox.find('.light-box-cnt').outerWidth();
@@ -171,43 +181,26 @@
             e.stopPropagation();
             if ($lightBox.hasClass('show')) {
                 e.preventDefault();
+            } else {
+                return;
             }
 
-            var $cnt = $lightBox.find('.light-box-cnt');
             var $img = $lightBox.find('.img');
-
-            var img_w = $img.width();
             var img_h = $img.height();
 
-            $cnt.css({
-                height: '',
-                width: ''
-            })
             if (e.wheelDelta) { //判断浏览器IE，谷歌滑轮事件
                 if (e.wheelDelta > 0) { //当滑轮向上滚动时
-                    $img.css({
-                        height: img_h * 1.1,
-                        width: img_w * 1.1
-                    });
+                    zoom(true);
                 }
-                if (e.wheelDelta < 0 && img_h > 50) { //当滑轮向下滚动时
-                    $img.css({
-                        height: img_h * .9,
-                        width: img_w * .9
-                    });
+                if (e.wheelDelta < 0) { //当滑轮向下滚动时
+                    zoom(false);
                 }
             } else if (e.detail) { //Firefox滑轮事件
-                if (e.detail > 0 && img_h > 50) { //当滑轮向下滚动时
-                    $img.css({
-                        height: img_h * .9,
-                        width: img_w * .9
-                    });
+                if (e.detail > 0) { //当滑轮向下滚动时
+                    zoom(false);
                 }
                 if (e.detail < 0) { //当滑轮向上滚动时
-                    $img.css({
-                        height: img_h * 1.1,
-                        width: img_w * 1.1
-                    });
+                    zoom(true);
                 }
             }
         }
@@ -217,5 +210,73 @@
         }
         //滚动滑轮触发scrollFunc方法  //ie 谷歌
         window.onmousewheel = document.onmousewheel = scrollFunc;
+
+        function zoom(yes) {
+            var $img = $lightBox.find('.img');
+
+            var img_w = $img.width();
+            var img_h = $img.height();
+
+            if (yes) {
+                $img.css({
+                    height: img_h * 1.1,
+                    width: img_w * 1.1
+                });
+            } else {
+                if (img_h > 50) {
+                    $img.css({
+                        height: img_h * .9,
+                        width: img_w * .9
+                    });
+                }
+            }
+
+            $lightBox.find('.light-box-cnt').css({
+                height: '',
+                width: ''
+            });
+        }
+
+        // 键盘操作
+        $(document).on('keydown.keyboard', $.proxy(keyboardAction, this));
+
+        function disableKeyboardNav() {
+            $(document).off('.keyboard');
+        }
+
+        function keyboardAction() {
+            var KEYCODE_ESC = 27;
+            var KEYCODE_LEFTARROW = 37;
+            var KEYCODE_RIGHTARROW = 39;
+            var KEYCODE_ZOOM = 187;
+            var KEYCODE_SHRINK = 180;
+
+            var keycode = event.keyCode;
+            var key = String.fromCharCode(keycode).toLowerCase();
+			console.log(key, keycode);
+            if (!$lightBox.hasClass('show')) {
+                return;
+            }
+
+            if (keycode === KEYCODE_ESC || key.match(/x|o|c/)) {
+                lightBoxClose();
+            } else if (key === 'p' || keycode === KEYCODE_LEFTARROW) {
+                //              if (this.currentImageIndex !== 0) {
+                //                  this.changeImage(this.currentImageIndex - 1);
+                //              } else if (this.options.wrapAround && this.album.length > 1) {
+                //                  this.changeImage(this.album.length - 1);
+                //              }
+            } else if (key === 'n' || keycode === KEYCODE_RIGHTARROW) {
+                //              if (this.currentImageIndex !== this.album.length - 1) {
+                //                  this.changeImage(this.currentImageIndex + 1);
+                //              } else if (this.options.wrapAround && this.album.length > 1) {
+                //                  this.changeImage(0);
+                //              }
+            } else if (key === '»' || keycode === KEYCODE_ZOOM || key === '&' || keycode === 38) {
+                zoom(true);
+            } else if (key === '½' || keycode === KEYCODE_SHRINK || key === '(' || keycode === 40) {
+                zoom(false);
+            }
+        }
     });
 }(jQuery);

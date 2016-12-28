@@ -5,77 +5,80 @@
     <meta name="author" content="http://orzcss.com/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="icon" href="./orzcss.com.ico" type="image/x-icon">
-    <title>jquery-利用canvas让图片旋转角度</title>
+    <title>jQuery CLightbox 图片浏览效果</title>
     <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/CLightBox.css" />
 </head>
 
 <body>
     <div class="wrap">
-        <h1>jquery-利用canvas让图片旋转角度<small>点击图片旋转角度</small></h1>
+        <h1>jQuery CLightbox 图片浏览效果</h1>
         <ul class="rotate-img">
-            <li class="enter">
+            <li class="enter" data-lightbox="banner-1" data-url="./img/1.jpg" data-title="标题1">
                 <div class="bar">
-                    <img src="./img/1.jpg" data-big="./img/1.jpg" alt="标题1" class="img" />
+                    <img src="./img/1.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+            <li class="enter" data-lightbox="banner-1" data-url="./img/2.jpg" data-title="标题2">
                 <div class="bar">
-                    <img src="./img/2.jpg" data-big="./img/2.jpg" alt="标题2" class="img" />
+                    <img src="./img/2.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+            <li class="enter" data-lightbox="banner-1" data-url="./img/3.jpg" data-title="标题3">
                 <div class="bar">
-                    <img src="./img/3.jpg" data-big="./img/3.jpg" alt="标题3" class="img" />
+                    <img src="./img/3.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+            <li class="enter" data-lightbox="banner-1" data-url="./img/4.jpg" data-title="标题4">
                 <div class="bar">
-                    <img src="./img/4.jpg" data-big="./img/4.jpg" alt="标题4" class="img" />
+                    <img src="./img/4.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+            <li class="enter" data-lightbox="banner-1" data-url="./img/5.jpg" data-title="标题5">
                 <div class="bar">
-                    <img src="./img/5.jpg" data-big="./img/5.jpg" alt="标题5" class="img" />
+                    <img src="./img/5.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+        </ul>
+
+        <ul class="rotate-img" id="rotateImg">
+            <li class="enter" data-url="./img/6.jpg" data-title="标题6">
                 <div class="bar">
-                    <img src="./img/6.jpg" data-big="./img/6.jpg" alt="标题6" class="img" />
+                    <img src="./img/6.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+            <li class="enter" data-url="./img/7.jpg" data-title="标题7">
                 <div class="bar">
-                    <img src="./img/7.jpg" data-big="./img/7.jpg" alt="标题6" class="img" />
+                    <img src="./img/7.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+            <li class="enter" data-url="./img/8.jpg" data-title="标题8">
                 <div class="bar">
-                    <img src="./img/8.jpg" data-big="./img/8.jpg" alt="标题6" class="img" />
+                    <img src="./img/8.jpg" class="img" />
                 </div>
             </li>
-            <li class="enter">
+            <li class="enter" data-url="./img/9.jpg" data-title="标题9">
                 <div class="bar">
-                    <img src="./img/9.jpg" data-big="./img/9.jpg" alt="标题6" class="img" />
+                    <img src="./img/9.jpg" class="img" />
                 </div>
             </li>
         </ul>
     </div>
-    <div class="light-box">
-        <div class="light-box-cnt">
-            <div class="layer"></div>
-            <div class="light-box-hd">
-                <a class="icon icon-close" data-role="close"></a>
-                <a class="icon icon-rotate" data-role="rotate"></a>
-                <div class="title">light-box</div>
-            </div>
-            <div class="light-box-bd">
-                <img src="./img/white.png" alt="" class="img" />
-            </div>
-            <div class="light-box-ft"></div>
-        </div>
-    </div>
 
     <script src="./js/jquery-1.9.1.js" charset="utf-8"></script>
-    <script src="./js/rotateImg.js" charset="utf-8"></script>
+    <script src="./js/CLightBox.js" charset="utf-8"></script>
+    <script>
+        $('#rotateImg').CLightBox({
+            rotate: false,
+            target: '.enter',
+            className: 'xxxxxxxxxx', // 给弹窗父级添加 className
+            dragToggle: false, // 拖拽
+            keyboard: false, // 键盘操作
+            mouse: false, // 鼠标滚轮放大缩小
+            callback: function (e) {
+            		console.log(e);
+            }
+        });
+    </script>
 </body>
 </html>

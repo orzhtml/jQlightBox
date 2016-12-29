@@ -40,7 +40,8 @@
             this.$lightbox = $(this.constructor.TEMPLATE());
             this.$lightbox.attr('id', 'CLightBox-' + new Date().getTime());
             this.$body.append(this.$lightbox);
-
+			this.$bar = this.$lightbox.find('.CLightBox-bar');
+			this.$toolbar = this.$lightbox.find('.CLightBox-toolbar');
             this.$layer = this.$lightbox.find('.layer');
             this.$container = this.$lightbox.find('.CLightBox-cnt');
             this.$title = this.$lightbox.find('.title');
@@ -58,7 +59,7 @@
 
             this.$lightbox.on('click', function (e) {
                 var $target = $(e.target);
-                if (!$target.parents('.CLightBox-cnt').first().length) {
+                if (!$target.parents('.CLightBox-cnt').first().length && !$target.hasClass('icon')) {
                     self.close();
                 }
             });
@@ -189,11 +190,13 @@
             var newHeight = imageHeight + 75;
 
             if (oldWidth !== newWidth || oldHeight !== newHeight) {
+            		this.$bar.css({
+            			left: '',
+                    top: ''
+            		})
                 this.$container.css({
                     width: oldWidth,
-                    height: oldHeight,
-                    left: '',
-                    top: ''
+                    height: oldHeight
                 }).animate({
                     width: newWidth,
                     height: newHeight
@@ -220,7 +223,7 @@
                 topLength,
                 toggle = false;
 
-            this.$container.on('mousedown', function (e) {
+            this.$bar.on('mousedown', function (e) {
                 e.stopPropagation();
                 e.preventDefault();
                 var width = $(this).width();
@@ -233,7 +236,7 @@
             this.$document.on({
                 'mousemove.lightbox': function (e) {
                     if (toggle) {
-                        self.$container.css({
+                        self.$bar.css({
                             'left': e.pageX - leftLength,
                             'top': e.pageY - topLength
                         });
@@ -339,11 +342,13 @@
         close: function () {
             var self = this;
             this.$document.off('mousemove.lightbox').off('mouseup.lightbox').off('keydown.keyboard');
-            this.$container.fadeOut(200, function () {
+            this.$bar.fadeOut(200, function () {
                 self.$lightbox.removeClass('show-visible');
                 setTimeout(function () {
                     self.$lightbox.removeClass('show');
-                    self.$container.css({
+                    self.$bar.css({
+                    		left: '',
+                    		top: '',
                         display: ''
                     });
                     self.$close.removeClass('active');
@@ -365,17 +370,21 @@
 
     CLightBox.TEMPLATE = function () {
         return '<div class="CLightBox">' +
+            '    <div class="CLightBox-bar">' +
+            '		 <div class="CLightBox-toolbar">' +
+            '            <a class="icon icon-close" data-role="close"></a>' +
+            '            <a class="icon icon-rotate" data-role="rotate"></a>' +
+            '		 </div>' +
             '    <div class="CLightBox-cnt">' +
             '        <div class="layer"></div>' +
             '        <div class="CLightBox-hd">' +
-            '            <a class="icon icon-close" data-role="close"></a>' +
-            '            <a class="icon icon-rotate" data-role="rotate"></a>' +
             '            <div class="title">CLightBox</div>' +
             '        </div>' +
             '        <div class="CLightBox-bd">' +
             '            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2P4////fwAJ+wP9BUNFygAAAABJRU5ErkJggg==" alt="" class="img" />' +
             '        </div>' +
             '        <div class="CLightBox-ft"></div>' +
+            '    </div>' +
             '    </div>' +
             '</div>';
     };

@@ -9,7 +9,7 @@
 	transition: all 0.2s;
 	width: 100%;
 	z-index: 1001;
-	&.show { 
+	&.show {
 		display: block;
 	}
 	&.show-visible {
@@ -18,19 +18,59 @@
 	* {
 		box-sizing: border-box;
 	}
+	.icon {
+		cursor: pointer;
+		display: inline-block;
+		line-height: 18px;
+		vertical-align: middle;
+		&:before {
+			background: no-repeat;
+			background-size: 20px 20px;
+			content: '';
+			display: inline-block;
+			height: 20px;
+			vertical-align: middle;
+			width: 20px;
+		}
+	}
+	.icon-close,
+	.icon-rotate {
+		height: 45px;
+		line-height: 45px;
+		text-align: center;
+		width: 45px;
+	}
+	.icon-close {
+		&:before {
+			background-image: url("../img/close.png");
+		}
+	}
+	.icon-rotate {
+		&:before {
+			background-image: url("../img/rotating.png");
+		}
+	}
+	.CLightBox-bar {
+		left: 50%;
+		position: absolute;
+		top: 50px;
+		transform: translate(-50%,0%);
+	}
+	.CLightBox-toolbar {
+		top: -45px;
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		z-index: 2;
+	}
 	.CLightBox-cnt {
 		background-color: hsla(0,0%,99%,.95);
 		background-clip: padding-box;
 		border-radius: 6px;
 		cursor: move;
-		left: 50%;
 		min-width: 200px;
 		min-height: 100px;
-		overflow: hidden;
 		pointer-events: auto;
-		position: absolute;
-		top: 50px;
-		transform: translate(-50%,0%);
 	}
 	.layer {
 		background-color: #fff;
@@ -95,44 +135,6 @@
 			-webkit-transform: scaleY(.5);
 			transform: scaleY(.5);
 			width: 100%;
-		}
-	}
-	.icon {
-		cursor: pointer;
-		display: inline-block;
-		line-height: 18px;
-		position: relative;
-		vertical-align: middle;
-		&:before {
-			background: no-repeat;
-			background-size: 20px 20px;
-			content: '';
-			display: inline-block;
-			height: 20px;
-			vertical-align: middle;
-			width: 20px;
-		}
-	}
-	.icon-close,
-	.icon-rotate {
-		height: 45px;
-		line-height: 45px;
-		position: absolute;
-		text-align: center;
-		top: 0;
-		width: 45px;
-		z-index: 1;
-	}
-	.icon-close {
-		right: 0;
-		&:before {
-			background-image: url("../img/close.png");
-		}
-	}
-	.icon-rotate {
-		right: 45px;
-		&:before {
-			background-image: url("../img/rotating.png");
 		}
 	}
 	.CLightBox-bd {

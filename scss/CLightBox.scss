@@ -25,42 +25,83 @@
 		vertical-align: middle;
 		&:before {
 			background: no-repeat;
-			background-size: 20px 20px;
+			background-size: 100%;
 			content: '';
 			display: inline-block;
-			height: 20px;
+			height: 18px;
 			vertical-align: middle;
-			width: 20px;
+			width: 18px;
 		}
 	}
 	.icon-close,
-	.icon-rotate {
-		height: 45px;
-		line-height: 45px;
+	.icon-rotate,
+	.icon-left-rotating-90,
+	.icon-right-rotating-90,
+	.icon-next,
+	.icon-pause,
+	.icon-play,
+	.icon-prev {
+		height: 30px;
+		line-height: 30px;
 		text-align: center;
-		width: 45px;
+		width: 30px;
 	}
 	.icon-close {
 		&:before {
-			background-image: url("../img/close.png");
+			background-image: url("../img/icon/close.png");
 		}
 	}
 	.icon-rotate {
 		&:before {
-			background-image: url("../img/rotating.png");
+			background-image: url("../img/icon/rotating.png");
+		}
+	}
+	.icon-left-rotating-90 {
+		&:before {
+			background-image: url("../img/icon/left_rotating_90.png");
+		}
+	}
+	.icon-right-rotating-90 {
+		&:before {
+			background-image: url("../img/icon/right_rotating_90.png");
+		}
+	}
+	.icon-next {
+		&:before {
+			background-image: url("../img/icon/next.png");
+		}
+	}
+	.icon-pause {
+		&:before {
+			background-image: url("../img/icon/pause.png");
+		}
+	}
+	.icon-play {
+		&:before {
+			background-image: url("../img/icon/play.png");
+		}
+	}
+	.icon-prev {
+		&:before {
+			background-image: url("../img/icon/prev.png");
 		}
 	}
 	.CLightBox-bar {
 		left: 50%;
 		position: absolute;
-		top: 50px;
+		top: 60px;
 		transform: translate(-50%,0%);
 	}
 	.CLightBox-toolbar {
-		top: -45px;
+		background-color: hsla(0,0%,99%,.95);
+		background-clip: padding-box;
+		border-radius: 5px;
+		font-size: 0;
+		left: 50%;
 		position: absolute;
 		text-align: center;
-		width: 100%;
+		top: -45px;
+		transform: translate(-50%,0%);
 		z-index: 2;
 	}
 	.CLightBox-cnt {
@@ -88,7 +129,7 @@
 			}
 		}
 		&:after {
-			background: url("../img/loading.png") no-repeat;
+			background: url("../img/icon/loading.png") no-repeat;
 			-webkit-background-size: 100%;
 			background-size: 100%;
 			content: '';

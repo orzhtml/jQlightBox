@@ -108,6 +108,9 @@
             });
 
             this.$layer.addClass('active');
+            
+            var toolbar_width = self.$toolbar.find('a').length * self.$toolbar.find('a').eq(0).width();
+            this.$toolbar.css('width', toolbar_width);
 
             this.$lightbox.addClass('show');
             setTimeout(function () {
@@ -157,7 +160,7 @@
             var preloader = new Image();
 
             preloader.onload = function () {
-                var maxImageHeight = self.$window.height() - 175;
+                var maxImageHeight = self.$window.height() - 185;
                 var maxImageWidth = self.$window.width() - 40;
                 var imageWidth = imageHeight = 0;
 
@@ -372,8 +375,13 @@
         return '<div class="CLightBox">' +
             '    <div class="CLightBox-bar">' +
             '		 <div class="CLightBox-toolbar">' +
-            '            <a class="icon icon-close" data-role="close"></a>' +
+            '            <a class="icon icon-prev" data-role="prev"></a>' +
+            '            <a class="icon icon-play" data-role="play"></a>' +
+            '            <a class="icon icon-next" data-role="next"></a>' +
+            '            <a class="icon icon-left-rotating-90" data-role="rotate-left"></a>' +
+            '            <a class="icon icon-right-rotating-90" data-role="rotate-right"></a>' +
             '            <a class="icon icon-rotate" data-role="rotate"></a>' +
+            '            <a class="icon icon-close" data-role="close"></a>' +
             '		 </div>' +
             '    <div class="CLightBox-cnt">' +
             '        <div class="layer"></div>' +
@@ -424,3 +432,23 @@
 
     $(document).CLightBox();
 }(jQuery, window, document);
+
+// 保存图片到本地
+function DownLoadReportIMG(imgPathURL) {
+    //如果隐藏IFRAME不存在，则添加
+    if (!document.getElementById('IframeReportImg'))
+    $('').appendTo('body');
+    
+    if (document.all.IframeReportImg.src != imgPathURL) {
+        //加载图片
+        document.all.IframeReportImg.src = imgPathURL;
+    }
+    else {
+        //图片直接另存为
+        DoSaveAsIMG();
+    }
+}
+function DoSaveAsIMG() {
+    if (document.all.IframeReportImg.src != 'about:blank')
+    document.frames('IframeReportImg').document.execCommand('SaveAs');
+}

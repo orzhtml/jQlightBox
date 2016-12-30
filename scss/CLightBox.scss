@@ -147,6 +147,7 @@
 		position: relative;
 		font-size: 0;
 		line-height: 0;
+		overflow: hidden;
 		text-align: center;
 	}
 	.title {
@@ -170,7 +171,8 @@
 			transform-origin: 0 0;
 			border-bottom: 1px solid #ddd;
 			bottom: 0;
-			left: 0;
+			left: 1px;
+			right: 1px;
 			-webkit-transform-origin: 0 100%;
 			transform-origin: 0 100%;
 			-webkit-transform: scaleY(.5);

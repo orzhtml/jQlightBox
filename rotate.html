@@ -22,7 +22,9 @@
 </body>
 <script>
     (function () {
-    		var percentage = document.getElementById('percentage');
+        var percentage = document.getElementById('percentage');
+        var zoomBtn1 = document.getElementById('zoom1');
+        var zoomBtn2 = document.getElementById('zoom2');
         var canvas = document.getElementById('canvas');
         var context = canvas.getContext("2d");
         var img = new Image();
@@ -33,7 +35,6 @@
         var _imgH = 0;
         var _x = 1;
         var _y = 1;
-        var _i = 0;
         var _radian = 0;
         var precision = 0.25;
 
@@ -43,60 +44,78 @@
             _imgW = img.width;
             _imgH = img.height;
             context.drawImage(img, 0, 0);
-            draw(0);
+            drawing(0);
         };
 
         document.getElementById('rotate').onclick = function () {
-            rotate();
+            if (parseInt(this.title)) {
+                return;
+            }
+
+            this.title = 1;
+
+            rotating(this);
         };
 
         document.getElementById('horizontal').onclick = function () {
             _radian = Math.PI - _radian;
             _x *= -1;
-            draw(_radian);
+            drawing(_radian);
         };
 
         document.getElementById('vertical').onclick = function () {
             _radian = Math.PI - _radian;
             _y *= -1;
-            draw(_radian);
+            drawing(_radian);
         };
 
-        document.getElementById('zoom1').onmousedown = function () {
-            if (checkZoom(_y) <= 0.03) {
-                // 缩小最多到原图的0.03倍
+        zoomBtn1.onclick = function () {
+            var old_y = checkShaft(_y);
+            if (old_y <= 0.01 || parseInt(this.title) || parseInt(zoomBtn2.title)) {
+                // 缩小最多到原图的0.01倍
                 return;
             }
 
-            switch (checkZoom(_y)) {
+            this.title = 1;
+
+            switch (old_y) {
                 case 0.25: // 等于0.25
-                    precision = 0.13;
+                    precision = -0.13;
                     break;
                 case 0.12: // 等于0.12
-                    precision = 0.06;
+                    precision = -0.06;
                     break;
                 case 0.06: // 等于0.06
-                    precision = 0.03;
+                    precision = -0.03;
+                    break;
+                case 0.03: // 等于0.03
+                    precision = -0.02;
                     break;
                 default: // 其他情况 0.25
-                    precision = 0.25; 
+                    precision = -0.25;
             }
 
-            var YZoom = getZoom(_y, precision); // 修复 正负Y轴
-            var XZoom = getZoom(_x, precision); // 修复 正负X轴
-            _y = Math.round((_y - YZoom) * 100) / 100; // 计算缩放后的Y轴
-            _x = Math.round((_x - XZoom) * 100) / 100; // 计算缩放后的X轴
-			percentage.innerHTML = (checkZoom(_y) * 100) + '%'
-            draw(_radian);
+            var xy = scaling(_y, _x, precision);
+            new_y = checkShaft(xy.y); // 计算缩放后的Y轴
+
+            percentage.innerHTML = (new_y * 100) + '%';
+
+            setZoom(this, old_y, new_y, precision);
         };
 
-        document.getElementById('zoom2').onmousedown = function () {
-            if (checkZoom(_y) >= 3) {
+        zoomBtn2.onclick = function () {
+            var old_y = checkShaft(_y);
+            if (old_y >= 3 || parseInt(this.title) || parseInt(zoomBtn1.title)) {
                 // 最多原图3倍放大
                 return;
             }
-            
-            switch (checkZoom(_y)) {
+
+            this.title = 1;
+
+            switch (old_y) {
+                case 0.01: // 等于0.02
+                    precision = 0.02;
+                    break;
                 case 0.03: // 等于0.03
                     precision = 0.03;
                     break;
@@ -107,27 +126,30 @@
                     precision = 0.13;
                     break;
                 default: // 其他情况 0.25
-                    precision = 0.25; 
+                    precision = 0.25;
             }
-            
-            var YZoom = getZoom(_y, precision);
-            var XZoom = getZoom(_x, precision);
-            _y = Math.round((_y + YZoom) * 100) / 100;
-            _x = Math.round((_x + XZoom) * 100) / 100;
-			percentage.innerHTML = (checkZoom(_y) * 100) + '%'
-            draw(_radian);
+
+            var xy = scaling(_y, _x, precision);
+            new_y = checkShaft(xy.y); // 计算缩放后的Y轴
+
+            percentage.innerHTML = (new_y * 100) + '%';
+
+            setZoom(this, old_y, new_y, precision);
         };
 
         document.getElementById('reset').onclick = function () {
             _x = 1;
             _y = 1;
-            _i = 0;
             _radian = 0;
             precision = 0.25;
-            draw(0);
+            percentage.innerHTML = '100%';
+            zoomBtn1.title = 0;
+            zoomBtn2.title = 0;
+            drawing(_radian);
         };
 
-        function draw(radian) {
+        // 重新绘图
+        function drawing(radian) {
             context.save();
             context.clearRect(0, 0, _width, _height);
             context.translate(_width / 2, _height / 2);
@@ -137,36 +159,67 @@
             context.restore();
         }
 
-        function rotate() {
-            if (_i >= 10) {
-                _i = 0;
-                cancelAnimationFrame(_timer);
-                _timer = null;
-            } else {
-                _radian += Math.PI / 20;
-                draw(_radian);
-                _i++;
-                _timer = requestAnimationFrame(function () {
-                    rotate();
-                });
+        // 旋转过度动画
+        function rotating(btn) {
+            var _i = 0;
+            (function animation() {
+                if (_i >= 10) {
+                    _i = 0;
+                    cancelAnimationFrame(_timer);
+                    _timer = null;
+                    btn.title = 0;
+                } else {
+                    _radian += Math.PI / 20;
+                    drawing(_radian);
+                    _i++;
+                    _timer = requestAnimationFrame(function () {
+                        animation();
+                    });
+                }
+            })();
+        }
+
+        // 检查轴并将负数转为正整数
+        function checkShaft(scale) {
+            return scale < 0 ? -(scale) : scale;
+        }
+
+        // 缩放大小 返回缩放后（y，x）轴的值
+        function scaling(y, x, zoom) {
+            function getZoom(scale, zoom) {
+                return scale > 0 && scale > -zoom ? zoom :
+                    scale < 0 && scale < zoom ? -zoom : 0;
+            }
+
+            y += getZoom(y, zoom);
+            x += getZoom(x, zoom);
+            
+            return {
+                y: y.toFixed(3) * 1,
+                x: x.toFixed(3) * 1
             }
         }
 
-        function getZoom(scale, zoom) {
-            return scale > 0 && scale > -zoom ? zoom :
-                scale < 0 && scale < zoom ? -zoom : 0;
-        }
-
-        function checkZoom(scale) {
-            var n = 0;
-            if (scale > 0) {
-                n = scale;
-            } else if (scale < 0) {
-                n = -(scale);
-            } else {
-                n = 0;
-            }
-            return n;
+        function setZoom(Btn, oldY, newY, precision) {
+            var _oldY = oldY;
+            var _xy = {};
+            var _precision = precision / 10;
+            (function animation() {
+                if (_oldY == newY) {
+                    cancelAnimationFrame(_timer);
+                    _timer = null;
+                    Btn.title = 0;
+                } else {
+                    _xy = scaling(_y, _x, _precision); // 计算缩放后的YX轴
+                    _y = _xy.y; 
+                    _x = _xy.x;
+                    drawing(_radian);
+                    _oldY = (_oldY + _precision).toFixed(3) * 1;
+                    _timer = requestAnimationFrame(function () {
+                        animation();
+                    });
+                }
+            })();
         }
     })();
 </script>

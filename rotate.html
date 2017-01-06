@@ -159,26 +159,6 @@
             context.restore();
         }
 
-        // 旋转过度动画
-        function rotating(btn) {
-            var _i = 0;
-            (function animation() {
-                if (_i >= 10) {
-                    _i = 0;
-                    cancelAnimationFrame(_timer);
-                    _timer = null;
-                    btn.title = 0;
-                } else {
-                    _radian += Math.PI / 20;
-                    drawing(_radian);
-                    _i++;
-                    _timer = requestAnimationFrame(function () {
-                        animation();
-                    });
-                }
-            })();
-        }
-
         // 检查轴并将负数转为正整数
         function checkShaft(scale) {
             return scale < 0 ? -(scale) : scale;
@@ -200,6 +180,27 @@
             }
         }
 
+        // 旋转过度动画
+        function rotating(btn) {
+            var _i = 0;
+            (function animation() {
+                if (_i >= 10) {
+                    _i = 0;
+                    cancelAnimationFrame(_timer);
+                    _timer = null;
+                    btn.title = 0;
+                } else {
+                    _radian += Math.PI / 20;
+                    drawing(_radian);
+                    _i++;
+                    _timer = requestAnimationFrame(function () {
+                        animation();
+                    });
+                }
+            })();
+        }
+
+		// 缩放过度动画
         function setZoom(Btn, oldY, newY, precision) {
             var _oldY = oldY;
             var _xy = {};

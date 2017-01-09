@@ -16,6 +16,7 @@
         this.$document = $(document);
         this.$body = $('body');
         this.$vessel = elem;
+        this.curImageIndex = 0;
         // 初始化
         this.init();
     }
@@ -40,14 +41,16 @@
             this.$lightbox = $(this.constructor.TEMPLATE());
             this.$lightbox.attr('id', 'CLightBox-' + new Date().getTime());
             this.$body.append(this.$lightbox);
-			this.$bar = this.$lightbox.find('.CLightBox-bar');
-			this.$toolbar = this.$lightbox.find('.CLightBox-toolbar');
+            this.$bar = this.$lightbox.find('.CLightBox-bar');
+            this.$toolbar = this.$lightbox.find('.CLightBox-toolbar');
             this.$layer = this.$lightbox.find('.layer');
             this.$container = this.$lightbox.find('.CLightBox-cnt');
             this.$title = this.$lightbox.find('.title');
             this.$img = this.$lightbox.find('.img');
             this.$close = this.$lightbox.find('[data-role="close"]');
             this.$rotate = this.$lightbox.find('[data-role="rotate"]');
+            this.$prev = this.$lightbox.find('[data-role="prev"]');
+            this.$next = this.$lightbox.find('[data-role="next"]');
 
             this.$close.on('click', function () {
                 var $this = $(this);
@@ -81,6 +84,28 @@
                 this.dragDrop();
                 this.$container.css('cursor', 'inherit');
             }
+
+            this.$prev.on('click', function () {
+                if (self.curImageIndex === 0) {
+            			self.curImageIndex = self.album.length - 1;
+                    self.changeImage(self.album[self.curImageIndex].url);
+                } else {
+                		self.curImageIndex = self.curImageIndex - 1;
+                    self.changeImage(self.album[self.curImageIndex].url);
+                }
+                return false;
+            });
+
+            this.$next.on('click', function () {
+                if (self.curImageIndex === self.album.length - 1) {
+                		self.curImageIndex = 0;
+                    self.changeImage(self.album[0].url);
+                } else {
+                		self.curImageIndex = self.curImageIndex + 1;
+                    self.changeImage(self.album[self.curImageIndex].url);
+                }
+                return false;
+            });
         },
         start: function ($link) {
             var self = this;
@@ -108,7 +133,7 @@
             });
 
             this.$layer.addClass('active');
-            
+
             var toolbar_width = self.$toolbar.find('a').length * self.$toolbar.find('a').eq(0).width();
             this.$toolbar.css('width', toolbar_width);
 
@@ -121,6 +146,8 @@
             this.$title.text(this.album[imageNumber].title);
 
             this.changeImage(this.album[imageNumber].url);
+            
+            this.curImageIndex = imageNumber;
 
             if (this.options.dragToggle) {
                 this.dragDrop();
@@ -193,10 +220,10 @@
             var newHeight = imageHeight + 75;
 
             if (oldWidth !== newWidth || oldHeight !== newHeight) {
-            		this.$bar.css({
-            			left: '',
+                this.$bar.css({
+                    left: '',
                     top: ''
-            		})
+                })
                 this.$container.css({
                     width: oldWidth,
                     height: oldHeight
@@ -350,8 +377,8 @@
                 setTimeout(function () {
                     self.$lightbox.removeClass('show');
                     self.$bar.css({
-                    		left: '',
-                    		top: '',
+                        left: '',
+                        top: '',
                         display: ''
                     });
                     self.$close.removeClass('active');
@@ -437,18 +464,18 @@
 function DownLoadReportIMG(imgPathURL) {
     //如果隐藏IFRAME不存在，则添加
     if (!document.getElementById('IframeReportImg'))
-    $('').appendTo('body');
-    
+        $('').appendTo('body');
+
     if (document.all.IframeReportImg.src != imgPathURL) {
         //加载图片
         document.all.IframeReportImg.src = imgPathURL;
-    }
-    else {
+    } else {
         //图片直接另存为
         DoSaveAsIMG();
     }
 }
+
 function DoSaveAsIMG() {
     if (document.all.IframeReportImg.src != 'about:blank')
-    document.frames('IframeReportImg').document.execCommand('SaveAs');
+        document.frames('IframeReportImg').document.execCommand('SaveAs');
 }
